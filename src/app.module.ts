@@ -6,6 +6,7 @@ import { Cat } from './cats/cat.entity';
 import { CatsModule } from './cats/cats.module';
 import { UsersModule } from './users/users.module';
 import { User } from './users/user.entity';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { User } from './users/user.entity';
     }),
     CatsModule,
     UsersModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
