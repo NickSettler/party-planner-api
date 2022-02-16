@@ -8,4 +8,8 @@ export class UsersService {
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
   ) {}
+
+  public findOne(username: string): Promise<User> {
+    return this.userRepository.findOne({ username });
+  }
 }
