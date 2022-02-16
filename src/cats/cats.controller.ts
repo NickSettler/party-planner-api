@@ -3,6 +3,7 @@ import {
   Get,
   Header,
   HttpCode,
+  NotFoundException,
   Param,
   Req,
   Res,
@@ -29,9 +30,7 @@ export class CatsController {
     if (cat) {
       response.status(200).send(cat);
     } else {
-      response.status(404).send({
-        message: 'Cat not found',
-      });
+      throw new NotFoundException();
     }
   }
 }
