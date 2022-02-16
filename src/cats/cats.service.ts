@@ -11,7 +11,7 @@ export class CatsService {
     return this.catsRepository.find();
   }
 
-  public findOne(id: number): Promise<Cat> {
+  public findOne(id: number): Promise<Cat | undefined> {
     return this.catsRepository.findOne(id);
   }
 

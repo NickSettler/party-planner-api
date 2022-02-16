@@ -3,7 +3,6 @@ import {
   Get,
   Header,
   HttpCode,
-  HttpStatus,
   Param,
   Req,
   Res,
@@ -24,15 +23,15 @@ export class CatsController {
 
   @Get('/:id')
   @Header('Cache-Control', 'none')
-  public find(
-    @Param('id') id: string,
-    @Res() response: Response,
-    @Req() request: Request,
-  ): void {
-    response.status(HttpStatus.ACCEPTED).json({
-      method: request.method,
-      host: request.hostname,
-      protocol: request.protocol,
-    });
+  public async find(@Param('id') id: number, @Res() response: Response) {
+    const cat = await this.catsService.findOne(id);
+
+    if (cat) {
+      response.status(200).send(cat);
+    } else {
+      response.status(404).send({
+        message: 'Cat not found',
+      });
+    }
   }
 }
