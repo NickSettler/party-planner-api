@@ -8,7 +8,7 @@ export class CatsService {
   constructor(@InjectRepository(Cat) private catsRepository: Repository<Cat>) {}
 
   public async findAll(): Promise<Cat[] | undefined> {
-    return this.catsRepository.find();
+    return this.catsRepository.find({ relations: ['owner'] });
   }
 
   public findOne(id: number): Promise<Cat | undefined> {

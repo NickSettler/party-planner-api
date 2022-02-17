@@ -1,7 +1,15 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { User } from '../users/user.entity';
 
 @Entity({
   name: 'cats',
+  synchronize: true,
 })
 export class Cat {
   @PrimaryGeneratedColumn()
@@ -15,4 +23,8 @@ export class Cat {
     default: () => 'CURRENT_TIMESTAMP',
   })
   date_of_birth: Date;
+
+  @ManyToOne(() => User, (user) => user.cats)
+  @JoinColumn({ name: 'owner' })
+  owner: User;
 }

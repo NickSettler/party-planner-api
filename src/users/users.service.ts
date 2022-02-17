@@ -9,6 +9,10 @@ export class UsersService {
     @InjectRepository(User) private readonly userRepository: Repository<User>,
   ) {}
 
+  public findAll(): Promise<User[] | undefined> {
+    return this.userRepository.find({ relations: ['cats'] });
+  }
+
   public findOne(username: string): Promise<User> {
     return this.userRepository.findOne({ username });
   }
