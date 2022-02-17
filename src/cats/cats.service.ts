@@ -7,7 +7,7 @@ import { Repository } from 'typeorm';
 export class CatsService {
   constructor(@InjectRepository(Cat) private catsRepository: Repository<Cat>) {}
 
-  public async findAll(): Promise<Cat[]> {
+  public async findAll(): Promise<Cat[] | undefined> {
     return this.catsRepository.find();
   }
 

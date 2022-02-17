@@ -1,36 +1,34 @@
 import {
   Controller,
   Get,
-  Header,
   HttpCode,
   NotFoundException,
   Param,
-  Req,
-  Res,
+  UseGuards,
 } from '@nestjs/common';
-import { Request, Response } from 'express';
 import { CatsService } from './cats.service';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @Controller('cats')
 export class CatsController {
   constructor(private readonly catsService: CatsService) {}
 
   @Get()
+  @UseGuards(JwtAuthGuard)
   @HttpCode(200)
-  @Header('Cache-Control', 'none')
-  public async findAll(@Req() request: Request, @Res() response: Response) {
-    response.status(200).send(await this.catsService.findAll());
+  public async findAll() {
+    const cats = await this.catsService.findAll();
+
+    if (!cats || cats.length === 0) throw new NotFoundException();
+    return cats;
   }
 
   @Get('/:id')
-  @Header('Cache-Control', 'none')
-  public async find(@Param('id') id: number, @Res() response: Response) {
+  @UseGuards(JwtAuthGuard)
+  public async find(@Param('id') id: number) {
     const cat = await this.catsService.findOne(id);
 
-    if (cat) {
-      response.status(200).send(cat);
-    } else {
-      throw new NotFoundException();
-    }
+    if (!cat) throw new NotFoundException();
+    return cat;
   }
 }
