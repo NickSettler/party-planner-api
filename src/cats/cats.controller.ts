@@ -1,7 +1,6 @@
 import {
   Controller,
   Get,
-  HttpCode,
   NotFoundException,
   Param,
   UseGuards,
@@ -15,7 +14,6 @@ export class CatsController {
 
   @Get()
   @UseGuards(JwtAuthGuard)
-  @HttpCode(200)
   public async findAll() {
     const cats = await this.catsService.findAll();
 
