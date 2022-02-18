@@ -12,6 +12,8 @@ services:
       - postgres
     volumes:
       - ./src:/app/src
+      - ./views:/app/views
+      - ./public:/app/public
     command: yarn start:dev
   postgres:
     image: postgres:12
