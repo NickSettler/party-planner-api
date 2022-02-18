@@ -5,6 +5,9 @@ import { join } from 'path';
 import { engine } from 'express-handlebars';
 import * as passport from 'passport';
 import * as session from 'express-session';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
