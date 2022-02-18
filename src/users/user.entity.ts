@@ -1,4 +1,6 @@
 import {
+  AfterLoad,
+  BeforeInsert,
   Column,
   Entity,
   JoinColumn,
@@ -6,6 +8,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Cat } from '../cats/cat.entity';
+import * as CryptoJS from 'crypto-js';
 
 @Entity({
   name: 'users',
@@ -37,4 +40,20 @@ export class User {
   @OneToMany(() => Cat, (cat) => cat.owner)
   @JoinColumn({ name: 'user_id' })
   cats: Array<Cat>;
+
+  @BeforeInsert()
+  async hashPassword() {
+    const key = process.env.PASSWORD_KEY;
+    this.password = CryptoJS.AES.encrypt(this.password, key).toString(
+      CryptoJS.format.Hex,
+    );
+  }
+
+  @AfterLoad()
+  async decryptPassword() {
+    const key = process.env.PASSWORD_KEY;
+    this.password = CryptoJS.AES.decrypt(this.password, key).toString(
+      CryptoJS.enc.Utf8,
+    );
+  }
 }
