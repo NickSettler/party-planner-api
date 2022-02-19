@@ -2,6 +2,8 @@ import {
   Body,
   Controller,
   Get,
+  HttpCode,
+  HttpStatus,
   NotFoundException,
   Post,
   UseGuards,
@@ -11,14 +13,27 @@ import { UsersService } from './users.service';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { CreateUserDto } from './create-user.dto';
 import { ValidationPipe } from '../validation.pipe';
-import { ApiBody } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
+import { User } from '../entities/user.entity';
 
 @Controller('users')
+@ApiTags('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get()
   @UseGuards(JwtAuthGuard)
+  @ApiOkResponse({
+    description: 'Returns all users',
+    type: User,
+    isArray: true,
+  })
   public async getUsers() {
     const users = await this.usersService.findAll();
 
@@ -31,6 +46,14 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   @UsePipes(ValidationPipe)
   @ApiBody({ type: CreateUserDto })
+  @ApiCreatedResponse({
+    description: 'Returns created user',
+    type: User,
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Unauthorized',
+  })
+  @HttpCode(HttpStatus.CREATED)
   public async createUser(@Body() createUserDto: CreateUserDto) {
     return await this.usersService.create(createUserDto);
   }
