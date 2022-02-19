@@ -59,9 +59,7 @@ export class User {
   @BeforeInsert()
   async hashPassword() {
     const key = process.env.PASSWORD_KEY;
-    this.password = CryptoJS.AES.encrypt(this.password, key).toString(
-      CryptoJS.format.Hex,
-    );
+    this.password = CryptoJS.AES.encrypt(this.password, key).toString();
   }
 
   @AfterLoad()
