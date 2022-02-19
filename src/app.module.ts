@@ -9,8 +9,6 @@ import { User } from './users/user.entity';
 import { AuthModule } from './auth/auth.module';
 import { RouterModule } from '@nestjs/core';
 import { routes } from './config/router';
-import { AdminController } from './admin/admin.controller';
-import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
@@ -28,9 +26,8 @@ import { AdminModule } from './admin/admin.module';
     UsersModule,
     AuthModule,
     RouterModule.register(routes),
-    AdminModule,
   ],
-  controllers: [AppController, AdminController],
+  controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {}
