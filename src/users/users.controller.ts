@@ -8,7 +8,7 @@ import {
   UsePipes,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { CreateUserDto } from './create-user.dto';
 import { ValidationPipe } from '../validation.pipe';
 import { ApiBody } from '@nestjs/swagger';

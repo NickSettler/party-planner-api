@@ -6,7 +6,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { CatsService } from './cats.service';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import {
   ApiOkResponse,
   ApiTags,
