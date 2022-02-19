@@ -21,12 +21,7 @@ export class User {
   @Column({
     unique: true,
   })
-  username: string;
-
-  @Column({
-    unique: true,
-    default: null,
-  })
+  @ApiProperty()
   email: string;
 
   @Column()

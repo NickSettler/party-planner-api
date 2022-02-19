@@ -14,22 +14,22 @@ export class UsersService {
     return this.userRepository.find({ relations: ['cats'] });
   }
 
-  public findOne(username: string): Promise<User> {
-    return this.userRepository.findOne({ username });
+  public findOne(email: string): Promise<User> {
+    return this.userRepository.findOne({ email });
   }
 
   public async create(createDto: CreateUserDto): Promise<User> {
-    const { username, password } = createDto;
+    const { email, password } = createDto;
 
     const userInDb = await this.userRepository.findOne({
-      username,
+      email,
     });
 
     if (userInDb)
       throw new HttpException('User already exists', HttpStatus.CONFLICT);
 
     const user: User = await this.userRepository.create({
-      username,
+      email,
       password,
     });
     await this.userRepository.save(user);
