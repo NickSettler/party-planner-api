@@ -11,6 +11,7 @@ import { UsersService } from './users.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { CreateUserDto } from './create-user.dto';
 import { ValidationPipe } from '../validation.pipe';
+import { ApiBody } from '@nestjs/swagger';
 
 @Controller('users')
 export class UsersController {
@@ -29,6 +30,7 @@ export class UsersController {
   @Post()
   @UseGuards(JwtAuthGuard)
   @UsePipes(ValidationPipe)
+  @ApiBody({ type: CreateUserDto })
   public async createUser(@Body() createUserDto: CreateUserDto) {
     return await this.usersService.create(createUserDto);
   }
