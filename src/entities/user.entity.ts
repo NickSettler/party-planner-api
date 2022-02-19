@@ -10,12 +10,14 @@ import {
 import { Cat } from './cat.entity';
 import * as CryptoJS from 'crypto-js';
 import { Role } from '../roles/roles.enum';
+import { ApiProperty } from '@nestjs/swagger';
 
 @Entity({
   name: 'users',
 })
 export class User {
   @PrimaryGeneratedColumn()
+  @ApiProperty()
   id: number;
 
   @Column({
@@ -31,6 +33,7 @@ export class User {
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP',
   })
+  @ApiProperty()
   created_at: Date;
 
   @Column({
@@ -38,10 +41,12 @@ export class User {
     default: () => 'CURRENT_TIMESTAMP',
     onUpdate: 'CURRENT_TIMESTAMP',
   })
+  @ApiProperty()
   updated_at: Date;
 
   @OneToMany(() => Cat, (cat) => cat.owner)
   @JoinColumn({ name: 'user_id' })
+  @ApiProperty()
   cats: Array<Cat>;
 
   @Column({
@@ -49,6 +54,7 @@ export class User {
     enum: Role,
     default: Role.USER,
   })
+  @ApiProperty()
   role: Role[];
 
   @BeforeInsert()
