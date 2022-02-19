@@ -6,6 +6,8 @@ services:
       context: .
       dockerfile: docker/node/Dockerfile
     restart: always
+    env_file:
+      - .env
     ports:
       - "3000:3000"
     depends_on:
@@ -16,11 +18,9 @@ services:
       - ./public:/app/public
     command: yarn start:dev
   postgres:
-    image: postgres:12
+    image: postgis/postgis:12-master
     restart: always
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: postgres
+    env_file:
+      - .env
     volumes:
       - ./data:/var/lib/postgresql/data

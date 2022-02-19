@@ -5,7 +5,7 @@ WORKDIR /app
 COPY package.json .
 COPY yarn.lock .
 COPY nest-cli.json .
-COPY ormconfig.json .
+COPY ormconfig.js .
 COPY tsconfig.json .
 COPY tsconfig.build.json .
 
