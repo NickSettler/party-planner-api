@@ -5,11 +5,10 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { User } from '../users/user.entity';
+import { User } from './user.entity';
 
 @Entity({
   name: 'cats',
-  synchronize: true,
 })
 export class Cat {
   @PrimaryGeneratedColumn()

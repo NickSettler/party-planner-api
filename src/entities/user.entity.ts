@@ -7,19 +7,27 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Cat } from '../cats/cat.entity';
+import { Cat } from './cat.entity';
 import * as CryptoJS from 'crypto-js';
+import { Role } from '../roles/roles.enum';
 
 @Entity({
   name: 'users',
-  synchronize: true,
 })
 export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({
+    unique: true,
+  })
   username: string;
+
+  @Column({
+    unique: true,
+    default: null,
+  })
+  email: string;
 
   @Column()
   password: string;
@@ -40,6 +48,13 @@ export class User {
   @OneToMany(() => Cat, (cat) => cat.owner)
   @JoinColumn({ name: 'user_id' })
   cats: Array<Cat>;
+
+  @Column({
+    type: 'enum',
+    enum: Role,
+    default: Role.USER,
+  })
+  role: Role[];
 
   @BeforeInsert()
   async hashPassword() {
