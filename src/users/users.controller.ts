@@ -1,5 +1,6 @@
 import {
   Body,
+  CacheInterceptor,
   Controller,
   Get,
   HttpCode,
@@ -7,6 +8,7 @@ import {
   NotFoundException,
   Post,
   UseGuards,
+  UseInterceptors,
   UsePipes,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
@@ -23,6 +25,7 @@ import {
 import { User } from '../entities/user.entity';
 
 @Controller('users')
+@UseInterceptors(CacheInterceptor)
 @ApiTags('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}

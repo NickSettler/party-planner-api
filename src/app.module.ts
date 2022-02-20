@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { CacheModule, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -10,6 +10,7 @@ import { AuthModule } from './auth/auth.module';
 import { RouterModule } from '@nestjs/core';
 import { routes } from './config/router';
 import { Event } from './entities/event.entity';
+import * as redisStore from 'cache-manager-redis-store';
 
 @Module({
   imports: [
@@ -23,6 +24,12 @@ import { Event } from './entities/event.entity';
       entities: [Cat, User, Event],
       retryAttempts: 20,
       retryDelay: 5000,
+    }),
+    CacheModule.register({
+      store: redisStore,
+      host: process.env.REDIS_HOST,
+      port: process.env.REDIS_PORT,
+      isGlobal: true,
     }),
     CatsModule,
     UsersModule,
