@@ -11,7 +11,7 @@ export class UsersService {
   ) {}
 
   public findAll(): Promise<User[] | undefined> {
-    return this.userRepository.find({ relations: ['cats'] });
+    return this.userRepository.find({ relations: ['own_events'] });
   }
 
   public findOne(email: string): Promise<User> {

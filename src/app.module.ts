@@ -9,6 +9,7 @@ import { User } from './entities/user.entity';
 import { AuthModule } from './auth/auth.module';
 import { RouterModule } from '@nestjs/core';
 import { routes } from './config/router';
+import { Event } from './entities/event.entity';
 
 @Module({
   imports: [
@@ -19,7 +20,7 @@ import { routes } from './config/router';
       username: process.env.POSTGRES_USER,
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DB,
-      entities: [Cat, User],
+      entities: [Cat, User, Event],
       retryAttempts: 20,
       retryDelay: 5000,
     }),
