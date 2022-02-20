@@ -1,11 +1,4 @@
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
-import { User } from './user.entity';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 
 @Entity({
@@ -36,12 +29,4 @@ export class Cat {
     type: 'date-time',
   })
   date_of_birth: Date;
-
-  @ManyToOne(() => User, (user) => user.cats)
-  @JoinColumn({ name: 'owner' })
-  @ApiProperty({
-    description: 'The user that owns the cat',
-    type: () => User,
-  })
-  owner: User;
 }

@@ -3,14 +3,13 @@ import {
   BeforeInsert,
   Column,
   Entity,
-  JoinColumn,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Cat } from './cat.entity';
 import * as CryptoJS from 'crypto-js';
 import { Role } from '../roles/roles.enum';
 import { ApiProperty } from '@nestjs/swagger';
+import { Event } from './event.entity';
 
 @Entity({
   name: 'users',
@@ -58,13 +57,12 @@ export class User {
   })
   updated_at: Date;
 
-  @OneToMany(() => Cat, (cat) => cat.owner)
-  @JoinColumn({ name: 'user_id' })
+  @OneToMany(() => Event, (event) => event.created_by)
   @ApiProperty({
-    description: "User's cats",
-    type: () => [Cat],
+    description: "User's events",
+    type: () => [Event],
   })
-  cats: Array<Cat>;
+  own_events: Array<Event>;
 
   @Column({
     type: 'enum',
