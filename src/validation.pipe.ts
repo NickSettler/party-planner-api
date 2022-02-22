@@ -14,7 +14,10 @@ export class ValidationPipe implements PipeTransform {
     if (!metatype || !this.toValidate(metatype)) return value;
 
     const object = plainToInstance(metatype, value);
-    const errors = await validate(object);
+    const errors = await validate(object, {
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    });
 
     if (errors.length) {
       throw new BadRequestException({
