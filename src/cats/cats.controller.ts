@@ -8,7 +8,7 @@ import {
 import { CatsService } from './cats.service';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import {
-  ApiBearerAuth,
+  ApiCookieAuth,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiParam,
@@ -19,7 +19,7 @@ import { Cat } from '../entities/cat.entity';
 
 @Controller('cats')
 @ApiTags('cats')
-@ApiBearerAuth()
+@ApiCookieAuth()
 export class CatsController {
   constructor(private readonly catsService: CatsService) {}
 
