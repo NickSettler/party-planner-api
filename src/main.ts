@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import * as dotenv from 'dotenv';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import * as cookieParser from 'cookie-parser';
 
 dotenv.config();
 
@@ -22,6 +23,8 @@ async function bootstrap() {
   SwaggerModule.setup('api/docs', app, document);
 
   app.set('etag', 'strong');
+
+  app.use(cookieParser());
 
   await app.listen(3000);
 }
