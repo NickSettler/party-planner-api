@@ -10,6 +10,7 @@ import { AuthModule } from './auth/auth.module';
 import { RouterModule } from '@nestjs/core';
 import { routes } from './config/router';
 import { Event } from './entities/event.entity';
+import { EventsModule } from './events/events.module';
 import * as redisStore from 'cache-manager-redis-store';
 
 @Module({
@@ -35,6 +36,7 @@ import * as redisStore from 'cache-manager-redis-store';
     UsersModule,
     AuthModule,
     RouterModule.register(routes),
+    EventsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

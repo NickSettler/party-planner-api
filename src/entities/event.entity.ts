@@ -43,7 +43,7 @@ export class Event {
   @ApiProperty({
     type: 'string',
     description: 'The description of the event',
-    example: 'This is the first event',
+    example: 'Super duper party!',
     required: false,
     nullable: true,
   })
@@ -71,7 +71,7 @@ export class Event {
     description: 'The location of the event',
     example: {
       type: 'Point',
-      coordinates: [0, 0],
+      coordinates: [49.8, 15.05],
     },
     required: false,
     nullable: true,
@@ -125,5 +125,5 @@ export class Event {
     readOnly: false,
     nullable: false,
   })
-  created_by: number;
+  created_by: User;
 }
