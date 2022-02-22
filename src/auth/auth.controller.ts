@@ -5,10 +5,11 @@ import {
   HttpStatus,
   Post,
   Req,
+  Res,
   UseGuards,
   UsePipes,
 } from '@nestjs/common';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 import { LocalAuthGuard } from '../common/guards/local-auth.guard';
 import { AuthService } from './auth.service';
 import {
@@ -40,8 +41,11 @@ export class AuthController {
     description: 'User credentials',
     type: AuthUserDto,
   })
-  public async login(@Req() request: Request) {
-    return this.authService.login(request.user);
+  public async login(@Req() request: Request, @Res() response: Response) {
+    const cookie = this.authService.generateTokenCookie(request.user);
+    response.setHeader('Set-Cookie', cookie);
+
+    return response.send(request.user);
   }
 
   @UsePipes(ValidationPipe)
