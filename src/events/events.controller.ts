@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  ForbiddenException,
   Get,
   HttpCode,
   HttpStatus,
@@ -28,12 +29,17 @@ import { Event } from '../entities/event.entity';
 import { Request, Response } from 'express';
 import { User } from '../entities/user.entity';
 import { instanceToPlain } from 'class-transformer';
+import { CaslAbilityFactory } from '../casl/casl-ability.factory';
+import { Action } from '../casl/types';
 
 @Controller('events')
 @ApiTags('events')
 @ApiCookieAuth()
 export class EventsController {
-  constructor(private readonly eventsService: EventsService) {}
+  constructor(
+    private readonly eventsService: EventsService,
+    private readonly caslAbilityFactory: CaslAbilityFactory,
+  ) {}
 
   @Get()
   @UseGuards(JwtAuthGuard)
@@ -48,8 +54,11 @@ export class EventsController {
     description: 'Unauthorized',
   })
   @HttpCode(HttpStatus.OK)
-  public async getEvents(@Res() response: Response) {
-    const events = await this.eventsService.findAll();
+  public async getEvents(@Req() request: Request, @Res() response: Response) {
+    const rules = this.caslAbilityFactory.createForUser(request.user as User);
+    const events = (await this.eventsService.findAll()).filter((event: Event) =>
+      rules.can(Action.read, event),
+    );
 
     if (!events.length) throw new NotFoundException('No events found');
 
@@ -69,8 +78,12 @@ export class EventsController {
     description: 'Unauthorized',
   })
   @HttpCode(HttpStatus.OK)
-  public async getEvent(@Param() id: string) {
+  public async getEvent(@Req() request: Request, @Param() id: string) {
+    const rules = this.caslAbilityFactory.createForUser(request.user as User);
     const event = await this.eventsService.findOne(id);
+
+    if (rules.cannot(Action.read, event))
+      throw new ForbiddenException('You are not allowed to read this event');
 
     if (!event) throw new NotFoundException('No event found');
 
@@ -92,6 +105,12 @@ export class EventsController {
     @Body() createEventDto: CreateEventDto,
     @Req() request: Request,
   ) {
+    if (
+      this.caslAbilityFactory
+        .createForUser(request.user as User)
+        .cannot(Action.create, Event)
+    )
+      throw new ForbiddenException();
     createEventDto.created_by = request.user as User;
     return await this.eventsService.create(createEventDto);
   }

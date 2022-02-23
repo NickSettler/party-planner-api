@@ -7,6 +7,7 @@ import { CatsModule } from './cats/cats.module';
 import { UsersModule } from './users/users.module';
 import { User } from './entities/user.entity';
 import { AuthModule } from './auth/auth.module';
+import { CaslModule } from './casl/casl.module';
 import { RouterModule } from '@nestjs/core';
 import { routes } from './config/router';
 import { Event } from './entities/event.entity';
@@ -35,6 +36,7 @@ import * as redisStore from 'cache-manager-redis-store';
     CatsModule,
     UsersModule,
     AuthModule,
+    CaslModule,
     RouterModule.register(routes),
     EventsModule,
   ],

@@ -14,7 +14,7 @@ import { ApiProperty } from '@nestjs/swagger';
 @Entity({
   name: 'events',
 })
-export class Event {
+export class Event<CASL extends boolean = false> {
   @PrimaryGeneratedColumn()
   @ApiProperty({
     type: 'integer',
@@ -115,5 +115,5 @@ export class Event {
     readOnly: false,
     nullable: false,
   })
-  created_by: User;
+  created_by: CASL extends true ? number : User;
 }
