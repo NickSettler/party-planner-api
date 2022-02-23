@@ -1,9 +1,11 @@
 import {
   BeforeInsert,
   Column,
+  CreateDateColumn,
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { Role } from '../roles/roles.enum';
 import { ApiProperty } from '@nestjs/swagger';
@@ -45,10 +47,7 @@ export class User {
   @Exclude()
   refresh_token?: string;
 
-  @Column({
-    type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP',
-  })
+  @CreateDateColumn()
   @ApiProperty({
     description: "User's creation date",
     example: '2020-01-01T00:00:00.000Z',
@@ -56,11 +55,7 @@ export class User {
   })
   created_at: Date;
 
-  @Column({
-    type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP',
-    onUpdate: 'CURRENT_TIMESTAMP',
-  })
+  @UpdateDateColumn()
   @ApiProperty({
     description: "User's last update date",
     example: '2020-01-01T00:00:00.000Z',

@@ -1,9 +1,11 @@
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { Geometry } from 'geojson';
 import { User } from './user.entity';
@@ -78,13 +80,7 @@ export class Event {
   })
   location: Geometry;
 
-  @Column({
-    name: 'created_at',
-    type: 'timestamp',
-    nullable: false,
-    default: () => 'now()',
-    onUpdate: 'now()',
-  })
+  @CreateDateColumn()
   @ApiProperty({
     type: 'date-time',
     description: 'The date and time of the event',
@@ -94,13 +90,7 @@ export class Event {
   })
   created_at: Date;
 
-  @Column({
-    name: 'updated_at',
-    type: 'timestamp',
-    nullable: false,
-    default: () => 'now()',
-    onUpdate: 'now()',
-  })
+  @UpdateDateColumn()
   @ApiProperty({
     type: 'date-time',
     description: 'The date and time of the event',
