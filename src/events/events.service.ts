@@ -4,10 +4,6 @@ import { Event } from '../entities/event.entity';
 import { Repository } from 'typeorm';
 import { CreateEventDto } from './events.dto';
 
-export type EventServiceCreateOptions = {
-  save?: boolean;
-};
-
 @Injectable()
 export class EventsService {
   constructor(
@@ -17,6 +13,10 @@ export class EventsService {
 
   public async findAll(): Promise<Event[]> {
     return await this.eventsRepository.find();
+  }
+
+  public async findOne(id: string): Promise<Event> {
+    return await this.eventsRepository.findOne(id);
   }
 
   public create(createEventDto: CreateEventDto): Promise<Event> {
