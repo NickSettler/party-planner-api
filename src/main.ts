@@ -4,6 +4,7 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import * as dotenv from 'dotenv';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as cookieParser from 'cookie-parser';
+import helmet from 'helmet';
 
 dotenv.config();
 
@@ -25,6 +26,7 @@ async function bootstrap() {
   app.set('etag', 'strong');
 
   app.use(cookieParser());
+  app.use(helmet());
 
   await app.listen(3000);
 }
