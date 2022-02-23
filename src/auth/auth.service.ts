@@ -14,26 +14,35 @@ export class AuthService {
   public async validateUser(email: string, password: string): Promise<any> {
     const user = await this.usersService.findOne(email);
     if (user && user.password === password) {
-      const { password, ...result } = user;
-      return result;
+      return user;
     }
 
     return null;
   }
 
-  public generateTokenCookie(user: any) {
+  public generateAccessTokenCookie(user: any) {
     const payload = { userId: user.id };
 
     const token = this.jwtService.sign(payload);
 
-    return `Authentication=${token}; HttpOnly; Path=/; Max-Age=${jwtConstants.expiresIn}`;
+    return `Authentication=${token}; HttpOnly; Path=/; Max-Age=${jwtConstants.tokenExpiresIn}`;
+  }
+
+  public generateRefreshTokenCookie(user: any) {
+    const payload = { userId: user.id };
+    const token = this.jwtService.sign(payload, {
+      secret: jwtConstants.refreshSecret,
+      expiresIn: jwtConstants.refreshExpiresIn,
+    });
+    const cookie = `Refresh=${token}; HttpOnly; Path=/; Max-Age=${jwtConstants.refreshExpiresIn}`;
+
+    return {
+      cookie,
+      token,
+    };
   }
 
   public async register(registerDto: RegisterUserDto) {
-    const user = await this.usersService.create(registerDto);
-
-    const { password, ...result } = user;
-
-    return result;
+    return await this.usersService.create(registerDto);
   }
 }

@@ -22,11 +22,17 @@ import {
 import { ValidationPipe } from '../validation.pipe';
 import { AuthUserDto, RegisterUserDto } from './auth.dto';
 import { User } from '../entities/user.entity';
+import { UsersService } from '../users/users.service';
+import { instanceToPlain } from 'class-transformer';
+import { JwtRefreshAuthGuard } from '../common/guards/jwt-refresh-auth.guard';
 
 @Controller('auth')
 @ApiTags('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly usersService: UsersService,
+  ) {}
 
   @UseGuards(LocalAuthGuard)
   @Post('login')
@@ -42,10 +48,21 @@ export class AuthController {
     type: AuthUserDto,
   })
   public async login(@Req() request: Request, @Res() response: Response) {
-    const cookie = this.authService.generateTokenCookie(request.user);
-    response.setHeader('Set-Cookie', cookie);
+    const accessCookie = this.authService.generateAccessTokenCookie(
+      request.user,
+    );
+    const refreshCookie = this.authService.generateRefreshTokenCookie(
+      request.user,
+    );
 
-    return response.send(request.user);
+    await this.usersService.setRefreshToken(
+      refreshCookie.token,
+      (request.user as User).id,
+    );
+
+    response.setHeader('Set-Cookie', [accessCookie, refreshCookie.cookie]);
+
+    return response.send(instanceToPlain(request.user));
   }
 
   @UsePipes(ValidationPipe)
@@ -56,6 +73,18 @@ export class AuthController {
   })
   @HttpCode(HttpStatus.CREATED)
   public async register(@Body() registerUserDto: RegisterUserDto) {
-    return this.authService.register(registerUserDto);
+    const user = this.authService.register(registerUserDto);
+    return instanceToPlain(user);
+  }
+
+  @Post('refresh')
+  @UseGuards(JwtRefreshAuthGuard)
+  public async refresh(@Req() request: Request, @Res() response: Response) {
+    const accessToken = this.authService.generateAccessTokenCookie(
+      request.user,
+    );
+
+    response.setHeader('Set-Cookie', [accessToken]);
+    return response.send(instanceToPlain(request.user));
   }
 }

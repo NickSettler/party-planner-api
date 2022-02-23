@@ -23,6 +23,7 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { User } from '../entities/user.entity';
+import { instanceToPlain } from 'class-transformer';
 
 @Controller('users')
 @UseInterceptors(CacheInterceptor)
@@ -42,7 +43,7 @@ export class UsersController {
 
     if (!users) throw new NotFoundException();
 
-    return users;
+    return instanceToPlain(users);
   }
 
   @Post()
@@ -58,6 +59,8 @@ export class UsersController {
   })
   @HttpCode(HttpStatus.CREATED)
   public async createUser(@Body() createUserDto: CreateUserDto) {
-    return await this.usersService.create(createUserDto);
+    const user = this.usersService.create(createUserDto);
+
+    return instanceToPlain(user);
   }
 }

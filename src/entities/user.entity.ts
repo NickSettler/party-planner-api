@@ -10,6 +10,7 @@ import * as CryptoJS from 'crypto-js';
 import { Role } from '../roles/roles.enum';
 import { ApiProperty } from '@nestjs/swagger';
 import { Event } from './event.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity({
   name: 'users',
@@ -31,8 +32,19 @@ export class User {
   })
   email: string;
 
-  @Column()
+  @Column({
+    type: 'varchar',
+    nullable: false,
+  })
+  @Exclude()
   password: string;
+
+  @Column({
+    type: 'varchar',
+    nullable: true,
+  })
+  @Exclude()
+  refresh_token?: string;
 
   @Column({
     type: 'timestamp',

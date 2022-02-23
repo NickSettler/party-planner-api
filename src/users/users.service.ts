@@ -31,6 +31,14 @@ export class UsersService {
     return user;
   }
 
+  public async findIfRefreshToken(refreshToken: string, userId: number) {
+    const user = await this.findById(userId);
+
+    if (user.refresh_token === refreshToken) {
+      return user;
+    }
+  }
+
   public async create(createDto: CreateUserDto): Promise<User> {
     const { email, password } = createDto;
 
@@ -47,5 +55,11 @@ export class UsersService {
     });
     await this.userRepository.save(user);
     return user;
+  }
+
+  public async setRefreshToken(refreshToken: string, userId: number) {
+    return await this.userRepository.update(userId, {
+      refresh_token: refreshToken,
+    });
   }
 }
