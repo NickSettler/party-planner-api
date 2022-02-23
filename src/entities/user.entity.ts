@@ -1,16 +1,15 @@
 import {
-  AfterLoad,
   BeforeInsert,
   Column,
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import * as CryptoJS from 'crypto-js';
 import { Role } from '../roles/roles.enum';
 import { ApiProperty } from '@nestjs/swagger';
 import { Event } from './event.entity';
 import { Exclude } from 'class-transformer';
+import { hashSync } from 'bcrypt';
 
 @Entity({
   name: 'users',
@@ -91,15 +90,6 @@ export class User {
 
   @BeforeInsert()
   async hashPassword() {
-    const key = process.env.PASSWORD_KEY;
-    this.password = CryptoJS.AES.encrypt(this.password, key).toString();
-  }
-
-  @AfterLoad()
-  async decryptPassword() {
-    const key = process.env.PASSWORD_KEY;
-    this.password = CryptoJS.AES.decrypt(this.password, key).toString(
-      CryptoJS.enc.Utf8,
-    );
+    this.password = hashSync(this.password, 10);
   }
 }
