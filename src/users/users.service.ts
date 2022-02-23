@@ -16,7 +16,7 @@ export class UsersService {
   ) {}
 
   public findAll(): Promise<User[] | undefined> {
-    return this.userRepository.find({ relations: ['own_events'] });
+    return this.userRepository.find();
   }
 
   public findOne(email: string): Promise<User> {
