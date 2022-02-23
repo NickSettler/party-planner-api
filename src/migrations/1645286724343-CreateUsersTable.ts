@@ -39,8 +39,9 @@ export class CreateUsersTable1645286724343 implements MigrationInterface {
           {
             name: 'roles',
             type: 'enum',
+            isArray: true,
             enum: Object.values(Role),
-            default: `'${Role.USER}'`,
+            default: `'{${Role.USER}}'`,
           },
         ],
       }),
