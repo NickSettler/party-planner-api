@@ -80,10 +80,14 @@ export class EventsController {
   @HttpCode(HttpStatus.OK)
   public async getEvent(@Req() request: Request, @Param() id: string) {
     const rules = this.caslAbilityFactory.createForUser(request.user as User);
+
+    if (rules.cannot(Action.read, Event))
+      throw new ForbiddenException('Forbidden');
+
     const event = await this.eventsService.findOne(id);
 
     if (rules.cannot(Action.read, event))
-      throw new ForbiddenException('You are not allowed to read this event');
+      throw new NotFoundException('No event found');
 
     if (!event) throw new NotFoundException('No event found');
 
