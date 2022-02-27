@@ -17,11 +17,14 @@ export class CaslAbilityFactory {
     );
 
     can(Action.create, Event);
-    can(
-      Action.read,
-      Event,
-      (event: Event<true>) => event.created_by === user.id,
-    );
+    can(Action.read, Event, (event: Event<true>) => {
+      console.log(event);
+
+      return (
+        event.created_by === user.id ||
+        (event.members && event.members.some((member) => member.id === user.id))
+      );
+    });
 
     return build({
       conditionsMatcher: lambdaMatcher,

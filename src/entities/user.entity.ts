@@ -3,9 +3,11 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
+  JoinTable,
 } from 'typeorm';
 import { Role } from '../roles/roles.enum';
 import { ApiProperty } from '@nestjs/swagger';
@@ -69,6 +71,24 @@ export class User {
     type: () => [Event],
   })
   own_events: Array<Event>;
+
+  @ManyToMany(() => Event, ({ members }) => members)
+  @JoinTable({
+    name: 'users_events',
+    joinColumn: {
+      name: 'user_id',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'event_id',
+      referencedColumnName: 'id',
+    },
+  })
+  @ApiProperty({
+    description: "User's events",
+    type: () => [Event],
+  })
+  events: Array<Event>;
 
   @Column({
     type: 'enum',

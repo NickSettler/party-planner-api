@@ -12,11 +12,15 @@ export class EventsService {
   ) {}
 
   public async findAll(): Promise<Event[]> {
-    return await this.eventsRepository.find();
+    return await this.eventsRepository.find({
+      relations: ['members'],
+    });
   }
 
   public async findOne(id: string): Promise<Event> {
-    return await this.eventsRepository.findOne(id);
+    return await this.eventsRepository.findOne(id, {
+      relations: ['members'],
+    });
   }
 
   public create(createEventDto: CreateEventDto): Promise<Event> {

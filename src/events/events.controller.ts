@@ -28,7 +28,7 @@ import {
 import { Event } from '../entities/event.entity';
 import { Request, Response } from 'express';
 import { User } from '../entities/user.entity';
-import { instanceToPlain } from 'class-transformer';
+import { instanceToPlain, plainToClass } from 'class-transformer';
 import { CaslAbilityFactory } from '../casl/casl-ability.factory';
 import { Action } from '../casl/types';
 
@@ -56,9 +56,9 @@ export class EventsController {
   @HttpCode(HttpStatus.OK)
   public async getEvents(@Req() request: Request, @Res() response: Response) {
     const rules = this.caslAbilityFactory.createForUser(request.user as User);
-    const events = (await this.eventsService.findAll()).filter((event: Event) =>
-      rules.can(Action.read, event),
-    );
+    const events = (await this.eventsService.findAll())
+      .filter((event: Event) => rules.can(Action.read, event))
+      .map((event) => plainToClass(Event, event));
 
     if (!events.length) throw new NotFoundException('No events found');
 
@@ -84,7 +84,10 @@ export class EventsController {
     if (rules.cannot(Action.read, Event))
       throw new ForbiddenException('Forbidden');
 
-    const event = await this.eventsService.findOne(id);
+    const event = plainToClass<Event, unknown>(
+      Event,
+      await this.eventsService.findOne(id),
+    );
 
     if (rules.cannot(Action.read, event))
       throw new NotFoundException('No event found');

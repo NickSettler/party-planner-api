@@ -3,6 +3,8 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
+  JoinTable,
+  ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -116,4 +118,22 @@ export class Event<CASL extends boolean = false> {
     nullable: false,
   })
   created_by: CASL extends true ? number : User;
+
+  @ManyToMany(() => User, ({ events }) => events)
+  @JoinTable({
+    name: 'users_events',
+    joinColumn: {
+      name: 'event_id',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'user_id',
+      referencedColumnName: 'id',
+    },
+  })
+  @ApiProperty({
+    description: 'The users that are attending the event',
+    type: () => [User],
+  })
+  members: User[];
 }
