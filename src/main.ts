@@ -26,7 +26,6 @@ async function bootstrap() {
     .setDescription('Event Api Documentation')
     .setVersion('1.0')
     .addTag('events')
-    .addTag('cats')
     .addTag('auth')
     .addTag('users')
     .addCookieAuth('Authentication')
