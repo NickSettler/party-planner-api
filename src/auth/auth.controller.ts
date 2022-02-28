@@ -79,6 +79,7 @@ export class AuthController {
 
   @Post('refresh')
   @UseGuards(JwtRefreshAuthGuard)
+  @HttpCode(HttpStatus.OK)
   public async refresh(@Req() request: Request, @Res() response: Response) {
     const accessToken = this.authService.generateAccessTokenCookie(
       request.user,
