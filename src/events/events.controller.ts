@@ -20,12 +20,15 @@ import { ValidationPipe } from '../validation.pipe';
 import { CreateEventDto, UpdateEventDto } from './events.dto';
 import { EventsService } from './events.service';
 import {
+  ApiBody,
   ApiCookieAuth,
   ApiCreatedResponse,
   ApiForbiddenResponse,
   ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
+  ApiOperation,
+  ApiParam,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
@@ -35,6 +38,9 @@ import { User } from '../entities/user.entity';
 import { instanceToPlain, plainToInstance } from 'class-transformer';
 import { CaslAbilityFactory } from '../casl/casl-ability.factory';
 import { Action } from '../casl/types';
+import { Roles } from '../roles/roles.decorator';
+import { Role } from '../roles/roles.enum';
+import { RolesGuard } from '../common/guards/roles.guard';
 
 @Controller('events')
 @ApiTags('events')
@@ -47,6 +53,10 @@ export class EventsController {
 
   @Get()
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: 'Get all events',
+    description: 'Get all events',
+  })
   @ApiOkResponse({
     description: 'Returns all events.',
     type: () => [Event],
@@ -77,6 +87,15 @@ export class EventsController {
 
   @Get('/:id')
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    description: 'Returns an event by id.',
+    summary: 'Get event by id',
+  })
+  @ApiParam({
+    description: 'Event id.',
+    name: 'id',
+    type: String,
+  })
   @ApiOkResponse({
     description: 'Returns event by id.',
     type: Event,
@@ -107,8 +126,17 @@ export class EventsController {
   }
 
   @Post()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @UsePipes(ValidationPipe)
+  @ApiOperation({
+    description: 'Creates a new event.',
+    summary: 'Creates a new event.',
+  })
+  @ApiBody({
+    description: 'Event to create.',
+    type: CreateEventDto,
+    required: true,
+  })
   @ApiCreatedResponse({
     description: 'The event has been successfully created.',
     type: () => Event,
@@ -120,6 +148,7 @@ export class EventsController {
     description: 'Forbidden.',
   })
   @HttpCode(HttpStatus.CREATED)
+  @Roles(Role.USER)
   public async create(
     @Body() createEventDto: CreateEventDto,
     @Req() request: Request,
@@ -144,6 +173,16 @@ export class EventsController {
   @UseGuards(JwtAuthGuard)
   @UsePipes(ValidationPipe)
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    description: 'Update event by id.',
+    summary: 'Update event by id.',
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'Event id.',
+    type: String,
+    required: true,
+  })
   @ApiForbiddenResponse({
     description: 'Forbidden.',
   })
@@ -182,6 +221,16 @@ export class EventsController {
   @Delete('/:id')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({
+    description: 'Delete event by id.',
+    summary: 'Delete event by id.',
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'Event id.',
+    type: String,
+    required: true,
+  })
   @ApiNoContentResponse({
     description: 'The event has been successfully deleted.',
   })
