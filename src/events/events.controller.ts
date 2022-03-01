@@ -38,9 +38,6 @@ import { User } from '../entities/user.entity';
 import { instanceToPlain, plainToInstance } from 'class-transformer';
 import { CaslAbilityFactory } from '../casl/casl-ability.factory';
 import { Action } from '../casl/types';
-import { Roles } from '../roles/roles.decorator';
-import { Role } from '../roles/roles.enum';
-import { RolesGuard } from '../common/guards/roles.guard';
 
 @Controller('events')
 @ApiTags('events')
@@ -126,7 +123,7 @@ export class EventsController {
   }
 
   @Post()
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard)
   @UsePipes(ValidationPipe)
   @ApiOperation({
     description: 'Creates a new event.',
@@ -148,7 +145,6 @@ export class EventsController {
     description: 'Forbidden.',
   })
   @HttpCode(HttpStatus.CREATED)
-  @Roles(Role.USER)
   public async create(
     @Body() createEventDto: CreateEventDto,
     @Req() request: Request,
