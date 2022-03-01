@@ -23,6 +23,7 @@ import {
   ApiCookieAuth,
   ApiCreatedResponse,
   ApiForbiddenResponse,
+  ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiTags,
@@ -181,6 +182,9 @@ export class EventsController {
   @Delete('/:id')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiNoContentResponse({
+    description: 'The event has been successfully deleted.',
+  })
   @ApiUnauthorizedResponse({
     description: 'Unauthorized.',
   })
