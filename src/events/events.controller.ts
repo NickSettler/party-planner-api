@@ -22,6 +22,7 @@ import { EventsService } from './events.service';
 import {
   ApiCookieAuth,
   ApiCreatedResponse,
+  ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiTags,
@@ -46,14 +47,17 @@ export class EventsController {
   @Get()
   @UseGuards(JwtAuthGuard)
   @ApiOkResponse({
-    description: 'Returns all events',
-    type: [Event],
+    description: 'Returns all events.',
+    type: () => [Event],
   })
   @ApiNotFoundResponse({
-    description: 'No events found',
+    description: 'No events found.',
   })
   @ApiUnauthorizedResponse({
-    description: 'Unauthorized',
+    description: 'Unauthorized.',
+  })
+  @ApiForbiddenResponse({
+    description: 'Forbidden.',
   })
   @HttpCode(HttpStatus.OK)
   public async getEvents(@Req() request: Request, @Res() response: Response) {
@@ -73,14 +77,17 @@ export class EventsController {
   @Get('/:id')
   @UseGuards(JwtAuthGuard)
   @ApiOkResponse({
-    description: 'Returns event by id',
+    description: 'Returns event by id.',
     type: Event,
   })
   @ApiNotFoundResponse({
-    description: 'No event found',
+    description: 'No event found.',
   })
   @ApiUnauthorizedResponse({
-    description: 'Unauthorized',
+    description: 'Unauthorized.',
+  })
+  @ApiForbiddenResponse({
+    description: 'Forbidden.',
   })
   @HttpCode(HttpStatus.OK)
   public async getEvent(@Req() request: Request, @Param() id: string) {
@@ -108,6 +115,9 @@ export class EventsController {
   @ApiUnauthorizedResponse({
     description: 'Unauthorized.',
   })
+  @ApiForbiddenResponse({
+    description: 'Forbidden.',
+  })
   @HttpCode(HttpStatus.CREATED)
   public async create(
     @Body() createEventDto: CreateEventDto,
@@ -132,6 +142,20 @@ export class EventsController {
   @Patch('/:id')
   @UseGuards(JwtAuthGuard)
   @UsePipes(ValidationPipe)
+  @HttpCode(HttpStatus.OK)
+  @ApiForbiddenResponse({
+    description: 'Forbidden.',
+  })
+  @ApiNotFoundResponse({
+    description: 'No event found.',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Unauthorized.',
+  })
+  @ApiOkResponse({
+    description: 'The event has been successfully updated.',
+    type: () => Event,
+  })
   public async update(
     @Body() updateEventDto: UpdateEventDto,
     @Param() id: string,
@@ -157,6 +181,15 @@ export class EventsController {
   @Delete('/:id')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiUnauthorizedResponse({
+    description: 'Unauthorized.',
+  })
+  @ApiForbiddenResponse({
+    description: 'Forbidden.',
+  })
+  @ApiNotFoundResponse({
+    description: 'No event found.',
+  })
   public async delete(@Param() id: string, @Req() request: Request) {
     const rules = this.caslAbilityFactory.createForUser(request.user as User);
 
