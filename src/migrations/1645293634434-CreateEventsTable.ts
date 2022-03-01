@@ -33,6 +33,12 @@ export class CreateEventsTable1645293634434 implements MigrationInterface {
             isNullable: true,
           },
           {
+            name: 'deleted',
+            type: 'boolean',
+            isNullable: false,
+            default: false,
+          },
+          {
             name: 'created_at',
             type: 'timestamp',
             default: 'now()',

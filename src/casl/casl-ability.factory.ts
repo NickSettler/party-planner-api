@@ -17,14 +17,29 @@ export class CaslAbilityFactory {
     );
 
     can(Action.create, Event);
-    can(Action.read, Event, (event: Event<true>) => {
-      console.log(event);
 
-      return (
+    can(
+      Action.read,
+      Event,
+      (event: Event<true>) =>
         event.created_by === user.id ||
-        (event.members && event.members.some((member) => member.id === user.id))
-      );
-    });
+        (event.members &&
+          event.members.some((member) => member.id === user.id)),
+    );
+    cannot(Action.read, Event, (event: Event<true>) => event.deleted);
+
+    can(
+      Action.update,
+      Event,
+      (event: Event<true>) => event.created_by === user.id,
+    );
+    cannot(Action.update, Event, (event: Event<true>) => event.deleted);
+
+    can(
+      Action.delete,
+      Event,
+      (event: Event<true>) => event.created_by === user.id,
+    );
 
     return build({
       conditionsMatcher: lambdaMatcher,
