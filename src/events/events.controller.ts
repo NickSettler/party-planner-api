@@ -1,12 +1,14 @@
 import {
   Body,
   Controller,
+  Delete,
   ForbiddenException,
   Get,
   HttpCode,
   HttpStatus,
   NotFoundException,
   Param,
+  Patch,
   Post,
   Req,
   Res,
@@ -15,7 +17,7 @@ import {
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { ValidationPipe } from '../validation.pipe';
-import { CreateEventDto } from './events.dto';
+import { CreateEventDto, UpdateEventDto } from './events.dto';
 import { EventsService } from './events.service';
 import {
   ApiCookieAuth,
@@ -56,6 +58,9 @@ export class EventsController {
   @HttpCode(HttpStatus.OK)
   public async getEvents(@Req() request: Request, @Res() response: Response) {
     const rules = this.caslAbilityFactory.createForUser(request.user as User);
+
+    if (!rules.can(Action.read, Event)) throw new ForbiddenException();
+
     const events = (await this.eventsService.findAll())
       .filter((event: Event) => rules.can(Action.read, event))
       .map((event) => plainToInstance(Event, event));
@@ -81,20 +86,16 @@ export class EventsController {
   public async getEvent(@Req() request: Request, @Param() id: string) {
     const rules = this.caslAbilityFactory.createForUser(request.user as User);
 
-    if (rules.cannot(Action.read, Event))
-      throw new ForbiddenException('Forbidden');
+    if (rules.cannot(Action.read, Event)) throw new ForbiddenException();
 
-    const event = plainToInstance<Event, unknown>(
-      Event,
-      await this.eventsService.findOne(id),
-    );
+    const event = await this.eventsService.findOne(id);
 
     if (rules.cannot(Action.read, event))
       throw new NotFoundException('No event found');
 
     if (!event) throw new NotFoundException('No event found');
 
-    return event;
+    return plainToInstance(Event, event);
   }
 
   @Post()
@@ -112,16 +113,61 @@ export class EventsController {
     @Body() createEventDto: CreateEventDto,
     @Req() request: Request,
   ) {
-    if (
-      this.caslAbilityFactory
-        .createForUser(request.user as User)
-        .cannot(Action.create, Event)
-    )
-      throw new ForbiddenException();
+    const rules = this.caslAbilityFactory.createForUser(request.user as User);
+
+    if (rules.cannot(Action.create, Event)) throw new ForbiddenException();
+
     createEventDto.created_by = request.user as User;
+
+    const createdEvent = await this.eventsService.create(createEventDto);
+
+    if (rules.cannot(Action.read, Event)) throw new ForbiddenException();
+
     return plainToInstance(
       Event,
-      await this.eventsService.create(createEventDto),
+      await this.eventsService.findOne(createdEvent.id),
     );
+  }
+
+  @Patch('/:id')
+  @UseGuards(JwtAuthGuard)
+  @UsePipes(ValidationPipe)
+  public async update(
+    @Body() updateEventDto: UpdateEventDto,
+    @Param() id: string,
+    @Req() request: Request,
+  ) {
+    const rules = this.caslAbilityFactory.createForUser(request.user as User);
+
+    if (rules.cannot(Action.update, Event)) throw new ForbiddenException();
+
+    const event = await this.eventsService.findOne(id);
+
+    if (!event) throw new NotFoundException();
+
+    if (rules.cannot(Action.update, event)) throw new NotFoundException();
+
+    const updatedEvent = await this.eventsService.update(id, updateEventDto);
+
+    if (rules.cannot(Action.read, updatedEvent)) throw new ForbiddenException();
+
+    return plainToInstance(Event, updatedEvent);
+  }
+
+  @Delete('/:id')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  public async delete(@Param() id: string, @Req() request: Request) {
+    const rules = this.caslAbilityFactory.createForUser(request.user as User);
+
+    if (rules.cannot(Action.delete, Event)) throw new ForbiddenException();
+
+    const event = await this.eventsService.findOne(id);
+
+    if (!event) throw new NotFoundException();
+
+    if (rules.cannot(Action.delete, event)) throw new NotFoundException();
+
+    await this.eventsService.delete(id);
   }
 }

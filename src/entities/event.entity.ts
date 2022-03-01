@@ -9,9 +9,10 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Geometry } from 'geojson';
+import { Point } from 'geojson';
 import { User } from './user.entity';
 import { ApiProperty } from '@nestjs/swagger';
+import { Exclude } from 'class-transformer';
 
 @Entity({
   name: 'events',
@@ -80,7 +81,15 @@ export class Event<CASL extends boolean = false> {
     required: false,
     nullable: true,
   })
-  location: Geometry;
+  location: Point | (() => string);
+
+  @Column({
+    type: 'boolean',
+    nullable: false,
+    default: false,
+  })
+  @Exclude()
+  deleted: boolean;
 
   @CreateDateColumn()
   @ApiProperty({
